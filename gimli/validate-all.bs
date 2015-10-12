@@ -1,0 +1,16 @@
+python3 main.py clean/train-0000.csv clean/test-0000.csv --validate --ngram-max=3 
+python3 main.py clean/train-0001.csv clean/test-0001.csv --validate --ngram-max=3 
+python3 main.py clean/train-0010.csv clean/test-0010.csv --validate --ngram-max=3 
+python3 main.py clean/train-0011.csv clean/test-0011.csv --validate --ngram-max=3 
+python3 main.py clean/train-0100.csv clean/test-0100.csv --validate --ngram-max=3 
+python3 main.py clean/train-0101.csv clean/test-0101.csv --validate --ngram-max=3 
+python3 main.py clean/train-0110.csv clean/test-0110.csv --validate --ngram-max=3 
+python3 main.py clean/train-0111.csv clean/test-0111.csv --validate --ngram-max=3 
+python3 main.py clean/train-1000.csv clean/test-1000.csv --validate --ngram-max=3 
+python3 main.py clean/train-1001.csv clean/test-1001.csv --validate --ngram-max=3 
+python3 main.py clean/train-1010.csv clean/test-1010.csv --validate --ngram-max=3 
+python3 main.py clean/train-1011.csv clean/test-1011.csv --validate --ngram-max=3 
+python3 main.py clean/train-1100.csv clean/test-1100.csv --validate --ngram-max=3 
+python3 main.py clean/train-1101.csv clean/test-1101.csv --validate --ngram-max=3 
+python3 main.py clean/train-1110.csv clean/test-1110.csv --validate --ngram-max=3 
+python3 main.py clean/train-1111.csv clean/test-1111.csv --validate --ngram-max=3 
