@@ -23,9 +23,8 @@ class WordVectorizer(object):
 		observations = map(str, observations) # converts from numpy string format to string
 
 		self.vectorizer = CountVectorizer(**kwargs)
-		bow = self.vectorizer.fit_transform(observations) # create vocabulary
+		self.bow = self.vectorizer.fit_transform(observations) # create vocabulary
 
-		return bow
 
 	def convert_to_word_vector(self, data, sparse=False):
 		"""
