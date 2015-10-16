@@ -5,14 +5,14 @@ from constants import *
 from utilities import *
 
 class Gimli (TextAnalyzer):
-    def process(self,ngram_max=2,filter_threshold=1,silent=False):
+    def process(self,ngram_max=2,filter_threshold=1):
         self.ngram_max=ngram_max
         self.filter_threshold=filter_threshold
 
-        if not silent:
+        if not self.silent:
             print_color("Processing data.",COLORS.GREEN)
         self.process_training_data()
-        if not silent:
+        if not self.silent:
             print_color("Scoring ngrams.",COLORS.GREEN)
         self.score_ngrams()
 
