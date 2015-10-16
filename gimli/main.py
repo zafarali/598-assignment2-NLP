@@ -13,6 +13,7 @@ Options:
     --random                The results are always scrambled, but with the same seed. This option makes it a new random each time.
     --validate              Show a percent correct score against the validation data after all processing is done.
     --validation-ratio=<r>  Number from 0 to 1. 0.8 means 80% of data is used for training, 20% for validation. [default: 0.8]
+    --balanced              Use an equal number of each category for training (discards a lot of data)
 
     -h --help              Show this screen.
     -v --version           Show version.
@@ -64,7 +65,8 @@ def compare(csv1,csv2):
     print("%s%% of lines match."%percent)
 
 def main(args):
-    random.seed(123)
+    if not args["--random"]:
+        random.seed(123)
 
     if args["compare"]:
         compare(args["<csv1>"],args["<csv2>"])
@@ -98,7 +100,8 @@ def main(args):
     gimli=Gimli(training,filter_threshold=threshold,
             ngram_max=ngram_max,
             validate=args["--validate"],
-            validation_ratio=validation_ratio)
+            validation_ratio=validation_ratio,
+            balanced=args["--balanced"])
     print_color("Making predictions.",COLORS.GREEN)
     gimli.make_predictions_csv(target)
 
