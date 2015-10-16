@@ -4,8 +4,7 @@ COMP598 Project 2 Text Analysis
 This trains with the training data and produces a predictions csv. Optionally shows validation stuff.
 
 Usage:
-  main.py <training-csv> <target-csv> [options]
-  main.py compare <csv1> <csv2>
+  main.py gimli <training-csv> [<target-csv>] [options]
 
 Options:
     --filter=<threshold>    Omit ngrams if they only occur this or fewer number of times [default: 1]
@@ -19,7 +18,7 @@ Options:
     -v --version           Show version.
 """
 
-import os.path,time
+import os.path,time,random
 from docopt import docopt
 from constants import *
 from utilities import *
@@ -44,39 +43,16 @@ def is_file(path):
         return 0
     return 1
 
-def compare(csv1,csv2):
-    if not is_file(csv1):
-        return
-    if not is_file(csv2):
-        return
-
-    print("Comparing:\n%s\n%s"%(csv1,csv2))
-    with open(csv1,"r") as f:
-        lines1=f.readlines()
-    with open(csv2,"r") as f:
-        lines2=f.readlines()
-
-    matches=0
-    for i,line1 in enumerate(lines1):
-        line2=lines2[i]
-        if line1==line2:
-            matches+=1
-    percent=round(100*matches/len(lines1),3)
-    print("%s%% of lines match."%percent)
-
 def main(args):
     if not args["--random"]:
         random.seed(123)
 
-    if args["compare"]:
-        compare(args["<csv1>"],args["<csv2>"])
-        return
-
     training=args["<training-csv>"]
     if not is_file(training):
         return
+
     target=args["<target-csv>"]
-    if not is_file(target):
+    if target and not is_file(target):
         return
 
     try:
@@ -97,13 +73,16 @@ def main(args):
         print_color("Bad value for ngram max.")
         return
 
-    gimli=Gimli(training,filter_threshold=threshold,
-            ngram_max=ngram_max,
-            validate=args["--validate"],
-            validation_ratio=validation_ratio,
-            balanced=args["--balanced"])
-    print_color("Making predictions.",COLORS.GREEN)
-    gimli.make_predictions_csv(target)
+    if args["gimli"]:
+        ta=Gimli(training,validation_ratio=validation_ratio)
+        
+    ta.process()
+        
+    if args["--validate"]:
+        ta.validate()
+    if target:
+        print_color("Making predictions.",COLORS.GREEN)
+        ta.make_predictions_csv(target)
 
     print("\nDone.\n")
 
