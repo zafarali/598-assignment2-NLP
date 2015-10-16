@@ -71,3 +71,36 @@ def naive_bayes(X,Y, gamma=1, verbose=False):
         #endfor
         return to_return
     return predictor
+
+
+
+def naive_bayes2(X, Y, gamma=1, verbose=False):
+    """
+        Naive Bayes 2 is an efficient implementation of a Bernoulli Naive Bayes
+        Algorithm, we make use of vector operations instead of loops this time to 
+        ensure high performance, and possibly more accuracy
+    """
+    n, m = X.shape
+    k = len(np.unique(Y))
+    t = 2
+
+    prior = np.zeros(k)
+    theta = (gamma/float(gamma*t)) * np.ones((m,k)) # accounts for features we haven't seen yet
+
+    # caclulating priors by estimating the sample mean: 1/n sum(y_i)
+    prior[1] = (np.sum( Y == 1 ) + gamma) / (float(n) + gamma*k) #for caution adding a Y==1 there.
+    prior[0] = 1 - prior[1]
+
+
+    for j in range(0,m):
+        theta[j,1] = (np.dot(X[:,j], Y) + gamma) / ( float(np.sum(Y==1)) + gamma * t )
+        theta[j,0] = (np.dot(X[:,j], 1-Y) + gamma) / ( float(np.sum(Y==0)) + gamma * t)
+
+    def predictor(X, verbose=False):
+        to_return = []
+        for to_classify in X:
+            prob_y_0 = prior[0] * np.prod( np.multiply(to_classify, theta[:,0]) + np.multiply(1-to_classify, 1-theta[:,0]) )
+            prob_y_1 = prior[1] * np.prod( np.multiply(to_classify, theta[:,1]) + np.multiply(1-to_classify, 1-theta[:,1]) )
+            to_return.append( [( 0, prob_y_0), (1, prob_y_1)] )
+        return to_return
+    return predictor
