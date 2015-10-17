@@ -5,14 +5,17 @@ This trains with the training data and produces a predictions csv. Optionally sh
 
 Usage:
   main.py gimli <training-csv> [<target-csv>] [options]
+  main.py pippin <training-csv> [<target-csv>] [options]
 
 Options:
-    --filter=<threshold>    Omit ngrams if they only occur this or fewer number of times [default: 1]
     --ngram-max=<max>       Analyze ngrams up to this length [default: 2]
     --random                The results are always scrambled, but with the same seed. This option makes it a new random each time.
     --validate              Show a percent correct score against the validation data after all processing is done.
     --validation-ratio=<r>  Number from 0 to 1. 0.8 means 80% of data is used for training, 20% for validation. [default: 0.8]
-    --balanced              Use an equal number of each category for training (discards a lot of data)
+    --timer=<interval>      Wait this number of seconds before showing an update on processing. [default: 20]
+
+    --filter=<threshold>    (Gimli) Omit ngrams if they only occur this or fewer number of times [default: 1]
+    --k=<k>                 (Pippin) Count this many nearest neighbours. [default: 5]
 
     -h --help              Show this screen.
     -v --version           Show version.
@@ -23,6 +26,7 @@ from docopt import docopt
 from constants import *
 from utilities import *
 from gimli import *
+from pippin import *
 
 def get_csv_path():
     #scans all existing data csvs, returns the name with the lowest number suffix that is unused
@@ -62,6 +66,18 @@ def main(args):
         return
 
     try:
+        k=int(args["--k"])
+    except ValueError:
+        print_color("Bad value for k.")
+        return
+
+    try:
+        interval=int(args["--timer"])
+    except ValueError:
+        print_color("Bad value for timer interval.")
+        return
+
+    try:
         validation_ratio=float(args["--validation-ratio"])
     except ValueError:
         print_color("Bad value for validation ratio.")
@@ -74,11 +90,14 @@ def main(args):
         return
 
     if args["gimli"]:
-        ta=Gimli(training,validation_ratio=validation_ratio)
-        
-    ta.process()
+        ta=Gimli(training,validation_ratio=validation_ratio,interval=interval)
+        ta.process(ngram_max=ngram_max,filter_threshold=threshold)
+    if args["pippin"]:
+        ta=Pippin(training,validation_ratio=validation_ratio,interval=interval)
+        ta.process(ngram_max=ngram_max,k=k)
         
     if args["--validate"]:
+        print_color("Starting validation.",COLORS.GREEN)
         ta.validate()
     if target:
         print_color("Making predictions.",COLORS.GREEN)

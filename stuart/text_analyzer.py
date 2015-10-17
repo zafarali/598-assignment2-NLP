@@ -4,9 +4,10 @@ from constants import *
 from utilities import *
 
 class TextAnalyzer:
-    def __init__(self,source_csv,silent=False,validation_ratio=0.8):
+    def __init__(self,source_csv,silent=False,validation_ratio=0.8,interval=20):
         self.validation_ratio=validation_ratio
         self.silent=silent
+        self.interval=interval
         self.has_processed=False
 
         if not silent:
@@ -17,6 +18,11 @@ class TextAnalyzer:
         if not self.has_processed:
             raise ValueError("ABORT. TextAnalyzer never processed.")
         lines=[]
+        timer=Timer(self.interval)
+        counter=0
+        with open(target,"r") as f:
+            line_count=len(f.readlines())
+
         with open(target,newline="") as f:
             reader=csv.reader(f)
             is_header=True
@@ -27,6 +33,8 @@ class TextAnalyzer:
                 if not row or len(row)!=2 or not row[0]:
                     continue
                 id,text=row
+                counter+=1
+                timer.tick("Making prediction %s/%s."%(counter,line_count))
                 prediction=self.get_prediction(text)
                 lines.append((str(id),str(prediction)))
 
@@ -80,7 +88,12 @@ class TextAnalyzer:
         confidence_total=[0 for i in range(OPTION_COUNT)]
         prediction_counter=[0 for i in range(OPTION_COUNT)]
 
+        timer=Timer(self.interval)
+        counter=0
+
         for id,text,category in self.validation_data:
+            counter+=1
+            timer.tick("Validating item %s/%s"%(counter,len(self.validation_data)))
             confidence=self.get_prediction_tuple(text)
             prediction=self.get_prediction_from_tuple(confidence)
 

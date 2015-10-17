@@ -40,7 +40,7 @@ class Gimli (TextAnalyzer):
         self.ngram_total=[0 for i in range(OPTION_COUNT)]
 
         counter=0
-        timer=Timer(10)
+        timer=Timer(self.interval)
         for id,text,category in self.training_data:
             counter+=1
             timer.tick("Processing item %s/%s"%(counter,len(self.training_data)))
@@ -67,7 +67,7 @@ class Gimli (TextAnalyzer):
         normalized=[self.ngram_total[i]/max(self.ngram_total) for i in range(OPTION_COUNT)]
 
         i=0
-        timer=Timer(10)
+        timer=Timer(self.interval)
         for ngram in self.ngram_count:
             i+=1
             timer.tick("Scoring item %s/%s"%(i,len(self.ngram_count)))
