@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 import sys
-from itertools import combinations_with_replacement
+from itertools import combinations_with_replacement, product
 from utilities import ConfusionMatrix
 import csv
 
@@ -11,7 +11,6 @@ import csv
 learn_code = sys.argv[1]
 test_what = sys.argv[2]
 
-df_complete = pd.read_csv('./clean/ml_dataset_train-'+learn_code+'.csv',index_col=0)
 
 
 
@@ -23,13 +22,15 @@ from SimpleNB import multiple_naive_bayes
 np.random.seed(4)
 
 
-n = len(df_complete)
-
-train_split = 0.8
 
 
+def run_nb(train_size=2000,ngram_range=(1,1),smoothing=1, learn_code='0000'):
 
-def run_nb(train_size=1000,ngram_range=(1,1),smoothing=1):
+	df_complete = pd.read_csv('./clean/ml_dataset_train-'+learn_code+'.csv',index_col=0)
+
+	n = len(df_complete)
+
+	train_split = 0.8
 
 	# subset of the training set for performance purposes
 	subset_indicies = np.random.choice([x for x in range(0, int(n*train_split)) ],size=train_size)
@@ -64,20 +65,16 @@ def run_nb(train_size=1000,ngram_range=(1,1),smoothing=1):
 	return Y_test, predicted
 
 
-
-
-
-
 to_save = []
 
 if test_what == 'train_size':
 
 	to_save.append(('train_size', 'accuracy', 'precision', 'recall'))
 
-	for train_size in [ 1000*n for n in range(1,5) ]:
-
+	for train_size in [ 1000*n for n in range(1,10) ]:
+		print('train_size:',train_size)
 		# train the naive bayes and obtain the actual, predicted vectors.
-		actual, predicted = run_nb(train_size=train_size)
+		actual, predicted = run_nb(train_size=train_size, learn_code=learn_code)
 
 		# get confusion matrix to get metrics
 		CM = ConfusionMatrix(actual, predicted)
@@ -87,9 +84,10 @@ if test_what == 'train_size':
 elif test_what == 'cumulative_ngram':
 	to_save.append(('ngram_max', 'accuracy', 'precision', 'recall'))
 
-	for max_ngram in range(1,4):
+	for max_ngram in range(1,5):
+		print('max_ngram:',max_ngram)
 		# train the naive bayes and obtain the actual, predicted vectors.
-		actual, predicted = run_nb(ngram_range=(1,max_ngram))
+		actual, predicted = run_nb(ngram_range=(1,max_ngram),  learn_code=learn_code)
 
 		# get confusion matrix to get metrics
 		CM = ConfusionMatrix(actual, predicted)
@@ -99,14 +97,27 @@ elif test_what == 'cumulative_ngram':
 elif test_what == 'ngram':
 	to_save.append(('ngram_length', 'accuracy', 'precision', 'recall'))
 
-	for ngram_length in range(1,4):
+	for ngram_length in range(1,9):
+		print('ngram_length:',ngram_length)
 		# train the naive bayes and obtain the actual, predicted vectors.
-		actual, predicted = run_nb(ngram_range=(ngram_length,ngram_length))
+		actual, predicted = run_nb(ngram_range=(ngram_length,ngram_length),  learn_code=learn_code)
 
 		# get confusion matrix to get metrics
 		CM = ConfusionMatrix(actual, predicted)
 
 		to_save.append( (ngram_length, CM.average_accuracy(), CM.precision(), CM.recall() ) )
+
+elif test_what == 'learn_codes':
+	to_save.append(('learn_code', 'accuracy', 'precision', 'recall'))
+
+	for combo in map(lambda x: ''.join(map(str, x)), product([0,1], repeat=4)):
+		print('combo:',combo)
+		actual, predicted = run_nb(learn_code=combo)
+
+		CM = ConfusionMatrix(actual, predicted)
+
+		to_save.append( (combo, CM.average_accuracy(), CM.precision(), CM.recall()) )
+
 
 
 with open('performance_test/performance_test_'+test_what+'_'+learn_code+'.csv', 'w') as f:

@@ -100,10 +100,10 @@ class ConfusionMatrix(object):
 
         for i, j in combinations_with_replacement(self.classes, r=2):
         #     print('i=',i,'j=',j)
-            confusion_matrix[i, j] = np.sum(np.logical_and(ACTUAL == i, PREDICT == j))
+            confusion_matrix[i, j] = np.sum(np.logical_and(actual == i, predicted == j))
         #     print(confusion_matrix[i-1, j-1])
 
-            confusion_matrix[j, i] = np.sum(np.logical_and(ACTUAL == j, PREDICT == i))
+            confusion_matrix[j, i] = np.sum(np.logical_and(actual == j, predicted == i))
 
         self.confusion_matrix = confusion_matrix
             
