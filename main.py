@@ -13,6 +13,7 @@ Options:
     --validate              Show a percent correct score against the validation data after all processing is done.
     --validation-ratio=<r>  Number from 0 to 1. 0.8 means 80% of data is used for training, 20% for validation. [default: 0.8]
     --timer=<interval>      Wait this number of seconds before showing an update on processing. [default: 20]
+    --balanced              Cull training data so that there is an even number of each category.
 
     --filter=<threshold>    (Gimli) Omit ngrams if they only occur this or fewer number of times [default: 1]
     --k=<k>                 (Pippin) Count this many nearest neighbours. [default: 5]
@@ -90,10 +91,10 @@ def main(args):
         return
 
     if args["gimli"]:
-        ta=Gimli(training,validation_ratio=validation_ratio,interval=interval)
+        ta=Gimli(training,validation_ratio=validation_ratio,interval=interval,balanced=args["--balanced"])
         ta.process(ngram_max=ngram_max,filter_threshold=threshold)
     if args["pippin"]:
-        ta=Pippin(training,validation_ratio=validation_ratio,interval=interval)
+        ta=Pippin(training,validation_ratio=validation_ratio,interval=interval,balanced=args["--balanced"])
         ta.process(ngram_max=ngram_max,k=k)
         
     if args["--validate"]:

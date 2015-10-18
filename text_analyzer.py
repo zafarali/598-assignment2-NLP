@@ -4,7 +4,7 @@ from constants import *
 from utilities import *
 
 class TextAnalyzer:
-    def __init__(self,source_csv,silent=False,validation_ratio=0.8,interval=20):
+    def __init__(self,source_csv,silent=False,validation_ratio=0.8,interval=20,balanced=False):
         self.validation_ratio=validation_ratio
         self.silent=silent
         self.interval=interval
@@ -13,6 +13,8 @@ class TextAnalyzer:
         if not silent:
             print_color("Loading CSV '%s'."%source_csv,COLORS.GREEN)
         self.set_source_data(source_csv)
+        if balanced:
+            self.balance_data()
 
     def make_predictions_csv(self,target):
         if not self.has_processed:
@@ -76,6 +78,21 @@ class TextAnalyzer:
         random.shuffle(self.data)
         self.training_data=self.data[:int(len(self.data)*self.validation_ratio)]
         self.validation_data=self.data[int(len(self.data)*self.validation_ratio):]
+
+    def balance_data(self):
+        cat_total=[0 for i in range(OPTION_COUNT)]
+        for id,text,category in self.training_data:
+            cat_total[category]+=1
+        max_items=min(cat_total)
+
+        cat_count=[0 for i in range(OPTION_COUNT)]
+        new_td=[]
+        for item in self.training_data:
+            a,b,category=item
+            if cat_count[category]<max_items:
+                cat_count[category]+=1
+                new_td.append(item)
+        self.training_data=new_td
 
     def validate(self):
         if not self.has_processed:
