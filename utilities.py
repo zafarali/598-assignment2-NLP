@@ -5,6 +5,8 @@ STEMMER=SnowballStemmer('english')
 import re, os, time, platform
 from constants import *
 
+import numpy as np
+
 from string import ascii_lowercase, ascii_uppercase, digits
 WHITELIST=set(ascii_lowercase+ascii_uppercase+digits+" _"+"".join(list(TOKENS.keys())))
 
