@@ -144,6 +144,9 @@ class ConfusionMatrix(object):
         return (self.TP(label)+self.TN(label))/float(self.TP(label)+self.TN(label)+self.FP(label)+self.FN(label))
         
     def average_accuracy(self):
+        """
+            Returns the Average Accuracy for the Labels
+        """
         accuracy = 0
         for label in self.classes:
             accuracy += self.accuracy(label)
@@ -151,6 +154,9 @@ class ConfusionMatrix(object):
         return accuracy/float(self.num_classes)
     
     def precision(self):
+        """
+            Returns the precision of the matrix
+        """
         numerator, denominator = 0.0, 0.0
         
         for label in self.classes:
@@ -160,7 +166,9 @@ class ConfusionMatrix(object):
         return (numerator/denominator)
     
     def recall(self):
-        
+        """
+            Returns the recall of the matrix
+        """
         numerator, denominator= 0.0, 0.0
         
         for label in self.classes:
