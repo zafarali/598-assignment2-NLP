@@ -9,6 +9,8 @@ class TextAnalyzer:
         self.silent=silent
         self.interval=interval
         self.has_processed=False
+        
+        self.source_csv = source_csv
 
         if not silent:
             print_color("Loading CSV '%s'."%source_csv,COLORS.GREEN)
