@@ -43,7 +43,7 @@ def run_nb(train_size=2000,ngram_range=(1,1),smoothing=1, learn_code='0000', kbe
 
 	# create a word vector using our training set
 	if kbest:
-		wv = WordVectorizer(df_train.values, contains_prediction=True, ngram_range=ngram_range, kbest=kbest) 
+		wv = WordVectorizer(df_train.values, contains_prediction=True, ngram_range=ngram_range, use_chi2=True, chi2_param=kbest) 
 	else:
 		wv = WordVectorizer(df_train.values, contains_prediction=True, ngram_range=ngram_range) 
 
@@ -123,8 +123,8 @@ elif test_what == 'learn_codes':
 elif test_what == 'chi2':
 	to_save.append(['kbest', 'accuracy', 'precision', 'recall'])
 
-	for kbest in [ 1000*n range(1,30)]:
-		print('combo:',combo)
+	for kbest in [ 1000*n for n in range(1,30)]:
+		print('kbest:',kbest)
 		actual, predicted = run_nb(kbest=kbest, train_size=10000, ngram_range=(1,1))
 
 		CM = ConfusionMatrix(actual, predicted)
