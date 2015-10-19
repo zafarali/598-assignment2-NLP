@@ -1,8 +1,10 @@
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_selection import SelectKBest, chi2
+
 
 class WordVectorizer(object):
-	def __init__(self, data, contains_prediction=False, **kwargs):
+	def __init__(self, data, contains_prediction=False, use_chi2=False, chi2_param=500, **kwargs):
 		"""
 			data is the training set to create the initial vocabulary
 			@params:
@@ -22,8 +24,17 @@ class WordVectorizer(object):
 
 		observations = map(str, observations) # converts from numpy string format to string
 
-		self.vectorizer = CountVectorizer(**kwargs)
-		self.bow = self.vectorizer.fit_transform(observations) # create vocabulary
+		self.count_vectorizer = CountVectorizer(**kwargs)
+		self.bow = self.count_vectorizer.fit_transform(observations) # create vocabulary
+		print(self.bow.shape)
+		self.use_chi2 = False
+
+		if use_chi2:
+			assert contains_prediction==True, 'Must supply predictions as well to use chi2'
+			self.ch2 = SelectKBest(chi2, k=chi2_param)
+			self.ch2.fit_transform(self.bow, list(labels))
+			self.use_chi2 = True
+
 
 
 	def convert_to_word_vector(self, data, sparse=False):
@@ -36,8 +47,12 @@ class WordVectorizer(object):
 			@returns:
 				numpy array of word_vectors which correspond to the data.
 		"""
+
+		to_be_returned = self.count_vectorizer.transform(data)
+		to_be_returned = self.ch2.transform(to_be_returned)
+		print(to_be_returned.toarray().shape)
 		if not sparse:
-			return self.vectorizer.transform(data).toarray()
+			return to_be_returned.toarray()
 		else:
-			return self.vectorizer.transform(data)
+			return to_be_returned
 

@@ -24,7 +24,7 @@ np.random.seed(4)
 
 
 
-def run_nb(train_size=2000,ngram_range=(1,1),smoothing=1, learn_code='0000'):
+def run_nb(train_size=2000,ngram_range=(1,1),smoothing=1, learn_code='0000', kbest=None):
 
 	df_complete = pd.read_csv('./clean/ml_dataset_train-'+learn_code+'.csv',index_col=0)
 
@@ -42,7 +42,10 @@ def run_nb(train_size=2000,ngram_range=(1,1),smoothing=1, learn_code='0000'):
 	df_test = df_complete.iloc[subset_indicies]
 
 	# create a word vector using our training set
-	wv = WordVectorizer(df_train.values, contains_prediction=True, ngram_range=ngram_range) 
+	if kbest:
+		wv = WordVectorizer(df_train.values, contains_prediction=True, ngram_range=ngram_range, kbest=kbest) 
+	else:
+		wv = WordVectorizer(df_train.values, contains_prediction=True, ngram_range=ngram_range) 
 
 	# make improvement here, convert to indicator
 	X_train = wv.convert_to_word_vector(df_train.values.T[0])
@@ -84,7 +87,7 @@ if test_what == 'train_size':
 elif test_what == 'cumulative_ngram':
 	to_save.append(('ngram_max', 'accuracy', 'precision', 'recall'))
 
-	for max_ngram in range(1,5):
+	for max_ngram in range(4,9):
 		print('max_ngram:',max_ngram)
 		# train the naive bayes and obtain the actual, predicted vectors.
 		actual, predicted = run_nb(ngram_range=(1,max_ngram),  learn_code=learn_code)
@@ -112,15 +115,25 @@ elif test_what == 'learn_codes':
 
 	for combo in map(lambda x: ''.join(map(str, x)), product([0,1], repeat=4)):
 		print('combo:',combo)
-		actual, predicted = run_nb(learn_code=combo)
+		actual, predicted = run_nb(learn_code=combo, train_size=6000, ngram_range=(1,1))
 
 		CM = ConfusionMatrix(actual, predicted)
 
 		to_save.append( (combo, CM.average_accuracy(), CM.precision(), CM.recall()) )
+elif test_what == 'chi2':
+	to_save.append(['kbest', 'accuracy', 'precision', 'recall'])
+
+	for kbest in [ 1000*n range(1,30)]:
+		print('combo:',combo)
+		actual, predicted = run_nb(kbest=kbest, train_size=10000, ngram_range=(1,1))
+
+		CM = ConfusionMatrix(actual, predicted)
+
+		to_save.append( (kbest, CM.average_accuracy(), CM.precision(), CM.recall()) )
 
 
 
-with open('performance_test/performance_test_'+test_what+'_'+learn_code+'.csv', 'w') as f:
+with open('performance_test/performance_test'+test_what+'_'+learn_code+'.csv', 'w') as f:
 	writer = csv.writer(f)
 	for row in to_save:
 		writer.writerow(row)
