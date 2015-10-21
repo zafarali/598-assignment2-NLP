@@ -5,9 +5,11 @@ from constants import *
 from utilities import *
 
 class Gimli (TextAnalyzer):
-    def process(self,ngram_max=2,filter_threshold=1):
+    def process(self,ngram_max=2,filter_threshold=1,exponent=3,length_exponent=0):
         self.ngram_max=ngram_max
         self.filter_threshold=filter_threshold
+        self.exponent=exponent
+        self.length_exponent=length_exponent
 
         if not self.silent:
             print_color("Gimli is processing data.",COLORS.GREEN)
@@ -32,7 +34,8 @@ class Gimli (TextAnalyzer):
             if ngram not in self.ngram_scores or count_tokens(ngram)>0:
                 continue
             scores=self.ngram_scores[ngram]
-            confidence=[confidence[i]+scores[i]**3 for i in range(OPTION_COUNT)]
+            confidence=[confidence[i]+(len(ngram)**self.length_exponent)*
+                    (scores[i]**self.exponent) for i in range(OPTION_COUNT)]
 
         total=sum(confidence)
         total=total if total else 1

@@ -141,5 +141,5 @@ class TextAnalyzer:
             print_color(" | ",COLORS.YELLOW, end="")
         print("")
 
-        cm=ConfusionMatrix(cm_actual,cm_predicted)
-        cm.show()
+        self.cm=ConfusionMatrix(cm_actual,cm_predicted)
+        self.cm.show()
