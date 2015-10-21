@@ -7,6 +7,7 @@ Usage:
   main.py gimli <training-csv> [<target-csv>] [options]
   main.py pippin <training-csv> [<target-csv>] [options]
   main.py frodo <training-csv> [<target-csv>] [options]
+  main.py council <training-csv> [<target-csv>] [options]
 
 Options:
     --ngram-max=<max>       Analyze ngrams up to this length [default: 2]
@@ -18,7 +19,7 @@ Options:
 
     --filter=<threshold>    (Gimli) Omit ngrams if they only occur this or fewer number of times [default: 1]
     --k=<k>                 (Pippin) Count this many nearest neighbours. [default: 5]
-    --cap=<n>               (Frodo) Only use this many training samples [default: 1000]
+    --nb-max=<n>            (Frodo) Only use this many training samples [default: 1000]
 
     -h --help              Show this screen.
     -v --version           Show version.
@@ -31,6 +32,7 @@ from utilities import *
 from gimli import *
 from pippin import *
 from SimpleNB_fordo import NB as Frodo
+from council import Council
 
 def get_csv_path():
     #scans all existing data csvs, returns the name with the lowest number suffix that is unused
@@ -88,9 +90,9 @@ def main(args):
         return
 
     try:
-        cap=int(args["--cap"])
+        nb_max=int(args["--nb-max"])
     except ValueError:
-        print_color("Bad value for cap.")
+        print_color("Bad value for nb-max.")
         return
 
     try:
@@ -98,6 +100,8 @@ def main(args):
     except ValueError:
         print_color("Bad value for ngram max.")
         return
+
+    start_time=time.time()
 
     if args["gimli"]:
         ta=Gimli(training,validation_ratio=validation_ratio,interval=interval,balanced=args["--balanced"])
@@ -107,7 +111,10 @@ def main(args):
         ta.process(ngram_max=ngram_max,k=k)
     if args["frodo"]:
         ta=Frodo(training,validation_ratio=validation_ratio,interval=interval,balanced=args["--balanced"])
-        ta.process(train_max=cap)
+        ta.process(nb_max=nb_max)
+    if args["council"]:
+        ta=Council(training,validation_ratio=validation_ratio,interval=interval,balanced=args["--balanced"])
+        ta.process(nb_max=nb_max)
         
     if args["--validate"]:
         print_color("Starting validation.",COLORS.GREEN)
@@ -116,7 +123,7 @@ def main(args):
         print_color("Making predictions.",COLORS.GREEN)
         ta.make_predictions_csv(target)
 
-    print("\nDone.\n")
+    print("Done after %s seconds."%round(time.time()-start_time,1))
 
 if __name__ == "__main__":
     args = docopt(__doc__, version="1.0")

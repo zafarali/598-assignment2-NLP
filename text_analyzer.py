@@ -11,6 +11,7 @@ class TextAnalyzer:
         self.silent=silent
         self.interval=interval
         self.has_processed=False
+        self.balanced=balanced
         
         self.source_csv = source_csv
 

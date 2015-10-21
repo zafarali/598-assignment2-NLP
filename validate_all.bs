@@ -1,0 +1,4 @@
+python3 main.py gimli ~/downloads/comp598-project2-data/clean/train-1111.csv --validate --ngram-max=3 --validation-ratio=0.9
+python3 main.py pippin ~/downloads/comp598-project2-data/clean/train-1111.csv --validate --ngram-max=3 --validation-ratio=0.9 --k=500
+python3 main.py frodo ~/downloads/comp598-project2-data/clean/train-1111.csv --validate --cap=20000 --validation-ratio=0.9
+python3 main.py council ~/downloads/comp598-project2-data/clean/train-1111-some.csv --validate --validation-ratio=0.9

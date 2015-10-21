@@ -13,11 +13,11 @@ from WordVectors import WordVectorizer
 
 
 class NB(TextAnalyzer):
-    def process(self, use_chi2=True, chi2_param=5000,train_max=1000):
+    def process(self, use_chi2=True, chi2_param=5000,nb_max=1000):
         if not self.silent:
             print_color("Frodo is processing data.",COLORS.GREEN)
             
-        training_data = np.array(self.training_data[:train_max])
+        training_data = np.array(self.training_data[:nb_max])
         
         interview_text = training_data[:,1]
         Y = training_data[:,2].astype(int)
