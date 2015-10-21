@@ -27,7 +27,7 @@ class NB(TextAnalyzer):
         # df_train = df_complete.iloc[subset_indicies]
         # self.df_train = df_train
 
-        training_data = np.array(self.training_data)
+        training_data = np.array(self.training_data[:1000])
         
         interview_text = training_data[:,1]
         Y = training_data[:,2].astype(int)
@@ -59,7 +59,8 @@ class NB(TextAnalyzer):
     def get_prediction_tuple(self,text):
         X = self.wv.convert_to_word_vector([text])
         X[X > 0] = 1
-        return self.predictor(X, only_probabilities=True, normalize=True)
+        np_thing= self.predictor(X, only_probabilities=True, normalize=True)
+        return np_thing.tolist()[0]
 
         # raise NotImplemented
         #given "text", return a 4 tuple with how confident you are for each category

@@ -6,6 +6,7 @@ This trains with the training data and produces a predictions csv. Optionally sh
 Usage:
   main.py gimli <training-csv> [<target-csv>] [options]
   main.py pippin <training-csv> [<target-csv>] [options]
+  main.py frodo <training-csv> [<target-csv>] [options]
 
 Options:
     --ngram-max=<max>       Analyze ngrams up to this length [default: 2]
@@ -28,6 +29,7 @@ from constants import *
 from utilities import *
 from gimli import *
 from pippin import *
+from SimpleNB_fordo import NB as Frodo
 
 def get_csv_path():
     #scans all existing data csvs, returns the name with the lowest number suffix that is unused
@@ -96,6 +98,9 @@ def main(args):
     if args["pippin"]:
         ta=Pippin(training,validation_ratio=validation_ratio,interval=interval,balanced=args["--balanced"])
         ta.process(ngram_max=ngram_max,k=k)
+    if args["frodo"]:
+        ta=Frodo(training,validation_ratio=validation_ratio,interval=interval,balanced=args["--balanced"])
+        ta.process()
         
     if args["--validate"]:
         print_color("Starting validation.",COLORS.GREEN)

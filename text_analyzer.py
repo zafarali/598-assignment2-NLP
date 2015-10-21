@@ -1,5 +1,7 @@
 import csv,time,math,random
 
+import numpy
+
 from constants import *
 from utilities import *
 
