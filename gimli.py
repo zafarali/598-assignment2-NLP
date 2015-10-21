@@ -18,6 +18,12 @@ class Gimli (TextAnalyzer):
 
         self.has_processed=True
 
+        self.clear_memory()
+
+    def clear_memory(self):
+        self.ngram_count=0
+        self.training_data=0
+
     def get_prediction_tuple(self,text):
         ngrams=get_cumulative_ngrams(text,self.ngram_max)
         confidence=[0 for i in range(OPTION_COUNT)]

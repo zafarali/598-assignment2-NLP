@@ -16,6 +16,11 @@ class Pippin(TextAnalyzer):
 
         self.has_processed=True
 
+        self.clear_memory()
+
+    def clear_memory(self):
+        self.training_data=0
+
     def process_training_data(self):
         #where keys are ngrams, values are a set of all ids with that ngram
         self.ngram_count={}
