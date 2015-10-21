@@ -13,21 +13,11 @@ from WordVectors import WordVectorizer
 
 
 class NB(TextAnalyzer):
-    def process(self, use_chi2=True, chi2_param=5000):
+    def process(self, use_chi2=True, chi2_param=5000,train_max=1000):
         if not self.silent:
             print_color("Frodo is processing data.",COLORS.GREEN)
             
-        #if eager learner, run functions to process training data
-        # self.do_stuff()
-
-        # df_complete = pd.read_csv(self.source_csv, index_col=0)
-
-        # np.random.seed(4)
-        # subset_indicies = np.random.choice([x for x in range(0,len(df_complete))],size=15000)
-        # df_train = df_complete.iloc[subset_indicies]
-        # self.df_train = df_train
-
-        training_data = np.array(self.training_data[:1000])
+        training_data = np.array(self.training_data[:train_max])
         
         interview_text = training_data[:,1]
         Y = training_data[:,2].astype(int)
@@ -61,21 +51,3 @@ class NB(TextAnalyzer):
         X[X > 0] = 1
         np_thing= self.predictor(X, only_probabilities=True, normalize=True)
         return np_thing.tolist()[0]
-
-        # raise NotImplemented
-        #given "text", return a 4 tuple with how confident you are for each category
-        #tuple should add up to 1
-
-        #in this example, 50% sure it's category 0, 30% for category 2, 20% category 3
-        # confidence=(0.5,0,0.3,0.2)
-        # return confidence
-
-    def do_stuff(self):
-        for id,text,category in self.training_data:
-            #this will iterate over all training cases
-            #the first time the for loop runs, id,text,category are set to the first example
-            #the second time, id,text,category are set to the second, etc
-            pass
-
-
-
