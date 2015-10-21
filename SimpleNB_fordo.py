@@ -20,21 +20,39 @@ class NB(TextAnalyzer):
         #if eager learner, run functions to process training data
         # self.do_stuff()
 
-        df_complete = pd.read_csv(self.source_csv, index_col=0)
+        # df_complete = pd.read_csv(self.source_csv, index_col=0)
 
-        np.random.seed(4)
-        subset_indicies = np.random.choice([x for x in range(0,len(df_complete))],size=15000)
-        df_train = df_complete.iloc[subset_indicies]
-        self.df_train = df_train
+        # np.random.seed(4)
+        # subset_indicies = np.random.choice([x for x in range(0,len(df_complete))],size=15000)
+        # df_train = df_complete.iloc[subset_indicies]
+        # self.df_train = df_train
+
+        training_data = np.array(self.training_data)
+        
+        interview_text = training_data[:,1]
+        Y = training_data[:,2].astype(int)
+        df_train = np.array([interview_text, Y]).T
 
         # training to be done
-        self.wv = WordVectorizer(df_train.values, contains_prediction=True, use_chi2=use_chi2, chi2_param=chi2_param)
-        X = self.wv.convert_to_word_vector(df_train.values.T[0])
+        self.wv = WordVectorizer(df_train, contains_prediction=True, use_chi2=use_chi2, chi2_param=chi2_param)
+        X = self.wv.convert_to_word_vector(df_train[:,0])
         X[X > 0] = 1
-        Y = df_train.values.T[1]
-        assert len(X) == len(Y)
+        # Y = df_train[:,1]
+        # assert len(X) == len(Y), str(X.shape)+' is not equal to '+str(Y.shape)
+        # print(df_train)
+        # print(X.shape, Y.shape)
+        # print(df_train.shape)
 
-        self.predictor = multiple_naive_bayes(X,Y)
+        # internalpurposes
+        self.X_internal = X
+        self.Y_internal = Y
+        self.df_train_internal = df_train
+        self.interview_text_internal = interview_text
+
+        try:
+            self.predictor = multiple_naive_bayes(X,Y)
+        except Exception as e:
+            print(str(e))
         #don't remove this:
         self.has_processed=True
 
