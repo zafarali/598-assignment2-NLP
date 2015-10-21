@@ -10,7 +10,7 @@ class Gimli (TextAnalyzer):
         self.filter_threshold=filter_threshold
 
         if not self.silent:
-            print_color("Processing data.",COLORS.GREEN)
+            print_color("Gimli is processing data.",COLORS.GREEN)
         self.process_training_data()
         if not self.silent:
             print_color("Scoring ngrams.",COLORS.GREEN)
