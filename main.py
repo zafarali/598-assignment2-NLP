@@ -18,6 +18,7 @@ Options:
 
     --filter=<threshold>    (Gimli) Omit ngrams if they only occur this or fewer number of times [default: 1]
     --k=<k>                 (Pippin) Count this many nearest neighbours. [default: 5]
+    --cap=<n>               (Frodo) Only use this many training samples [default: 1000]
 
     -h --help              Show this screen.
     -v --version           Show version.
@@ -87,6 +88,12 @@ def main(args):
         return
 
     try:
+        cap=int(args["--cap"])
+    except ValueError:
+        print_color("Bad value for cap.")
+        return
+
+    try:
         ngram_max=int(args["--ngram-max"])
     except ValueError:
         print_color("Bad value for ngram max.")
@@ -100,7 +107,7 @@ def main(args):
         ta.process(ngram_max=ngram_max,k=k)
     if args["frodo"]:
         ta=Frodo(training,validation_ratio=validation_ratio,interval=interval,balanced=args["--balanced"])
-        ta.process()
+        ta.process(train_max=cap)
         
     if args["--validate"]:
         print_color("Starting validation.",COLORS.GREEN)
