@@ -112,12 +112,17 @@ class TextAnalyzer:
 
         timer=Timer(self.interval)
         counter=0
+        cm_actual=[]
+        cm_predicted=[]
 
         for id,text,category in self.validation_data:
             counter+=1
             timer.tick("Validating item %s/%s"%(counter,len(self.validation_data)))
             confidence=self.get_prediction_tuple(text)
             prediction=self.get_prediction_from_tuple(confidence)
+
+            cm_actual.append(category)
+            cm_predicted.append(prediction)
 
             confidence_total[prediction]+=confidence[prediction]
             prediction_counter[prediction]+=1
@@ -136,39 +141,5 @@ class TextAnalyzer:
             print_color(" | ",COLORS.YELLOW, end="")
         print("")
 
-        print_color("Prediction matrix. X=reality  Y=prediction",COLORS.MAGENTA)
-        self.show_matrix(matrix)
-
-    def show_matrix(self,matrix):
-        if not self.has_processed:
-            raise ValueError("ABORT. TextAnalyzer never processed.")
-        bar="-"*34
-        print_color(bar,COLORS.YELLOW,end="")
-        for j in range(OPTION_COUNT):
-            print_color("\n | ",COLORS.YELLOW,end="")
-            for i in range(OPTION_COUNT):
-                print_color(str(matrix[i][j]).rjust(5),COLORS.MAGENTA,end="")
-                print_color(" | ",COLORS.YELLOW,end="")
-            percent=100*matrix[j][j]/sum([matrix[i][j] for i in range(OPTION_COUNT)])
-            print_color(" %s%%"%round(percent,2),COLORS.PURPLE,end="")
-
-        print_color("\n"+bar,COLORS.YELLOW)
-
-        print(" ",end="")
-        for i in range(OPTION_COUNT):
-            percent=100*matrix[i][i]/sum([matrix[i][j] for j in range(OPTION_COUNT)])
-            text=(" %s%%"%round(percent,1)).rjust(8)
-            print_color(text,COLORS.PURPLE,end="")
-        print("")
-
-
-
-
-
-
-
-
-
-
-
-
+        cm=ConfusionMatrix(cm_actual,cm_predicted)
+        cm.show()

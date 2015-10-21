@@ -179,6 +179,41 @@ class ConfusionMatrix(object):
             
         return (numerator/denominator)
 
+    def show(self):
+        def p(percent):
+            return round(percent*100,1)
+        matrix=self.confusion_matrix
+
         
-        
+        print_color("Precision: %s%%\nRecall: %s%%\nAverage Accuracy: %s%%"%(            
+            p(self.precision()),
+            p(self.recall()),
+            p(self.average_accuracy())),COLORS.PURPLE)
+        print_color("Confusion Matrix. X=reality  Y=prediction",COLORS.MAGENTA)
+        bar="-"*34
+        print_color(bar,COLORS.YELLOW,end="")
+        for j in range(OPTION_COUNT):
+            print_color("\n | ",COLORS.YELLOW,end="")
+            for i in range(OPTION_COUNT):
+                print_color(str(int(matrix[i][j])).rjust(5),COLORS.MAGENTA,end="")
+                print_color(" | ",COLORS.YELLOW,end="")
+            percent=matrix[j][j]/sum([matrix[i][j] for i in range(OPTION_COUNT)])
+            print_color(" %s%%"%p(percent),COLORS.PURPLE,end="")
+
+        print_color("\n"+bar,COLORS.YELLOW)
+
+        print(" ",end="")
+        for i in range(OPTION_COUNT):
+            percent=matrix[i][i]/sum([matrix[i][j] for j in range(OPTION_COUNT)])
+            text=(" %s%%"%p(percent)).rjust(8)
+            print_color(text,COLORS.PURPLE,end="")
+        print("")
+
+        for i in range(OPTION_COUNT):
+            print_color("Category %s"%(i+1),COLORS.YELLOW) 
+            print_color("Accuracy: %s%%"%p(self.accuracy(i)),COLORS.ORANGE)
+            print_color("TP: %s"%self.TP(i),COLORS.ORANGE)
+            print_color("TN: %s"%self.TN(i),COLORS.ORANGE)
+            print_color("FP: %s"%self.FP(i),COLORS.ORANGE)
+            print_color("FN: %s"%self.FN(i),COLORS.ORANGE)
         
