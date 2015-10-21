@@ -23,7 +23,7 @@ class NB(TextAnalyzer):
         df_complete = pd.read_csv(self.source_csv, index_col=0)
 
         np.random.seed(4)
-        subset_indicies = np.random.choice([x for x in range(0,len(df_complete))],size=1000)
+        subset_indicies = np.random.choice([x for x in range(0,len(df_complete))],size=15000)
         df_train = df_complete.iloc[subset_indicies]
         self.df_train = df_train
 
