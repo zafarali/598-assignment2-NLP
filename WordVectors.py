@@ -49,8 +49,9 @@ class WordVectorizer(object):
 		"""
 
 		to_be_returned = self.count_vectorizer.transform(data)
-		to_be_returned = self.ch2.transform(to_be_returned)
-		print(to_be_returned.toarray().shape)
+		if self.use_chi2:
+			to_be_returned = self.ch2.transform(to_be_returned)
+		# print(to_be_returned.toarray().shape)
 		if not sparse:
 			return to_be_returned.toarray()
 		else:
