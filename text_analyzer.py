@@ -136,7 +136,10 @@ class TextAnalyzer:
 
         print_color("Confidence per category:",COLORS.PURPLE)
         for i in range(OPTION_COUNT):
-            percent=round(100*confidence_total[i]/prediction_counter[i],2)
+            try:
+                percent=round(100*confidence_total[i]/prediction_counter[i],2)
+            except:
+                percent=-1
             print_color("%s: %s%%"%(i,percent),COLORS.PURPLE,end="")
             print_color(" | ",COLORS.YELLOW, end="")
         print("")
